@@ -1,4 +1,3 @@
-package com.scripts.powerminer;
 import java.awt.*;
 import javax.imageio.ImageIO;
 import java.io.IOException;
@@ -50,7 +49,7 @@ public class ironpowerminer extends ActiveScript implements PaintListener{
 	public class Mining extends Node {
 
 		public boolean activate() {
-			return (Inventory.getCount() < 28 && !Players.getLocal().isMoving() && Players
+			return (!Inventory.isFull() && !Players.getLocal().isMoving() && Players
 					.getLocal().getAnimation() == -1);
 		}
 
@@ -61,6 +60,7 @@ public class ironpowerminer extends ActiveScript implements PaintListener{
 					&& !Players.getLocal().isMoving())
 				;
 			{
+				System.out.println("Minning");
 				Mouse.click(rock.getCentralPoint(), true);
 				Task.sleep(200, 500);
 			}
@@ -72,6 +72,7 @@ public class ironpowerminer extends ActiveScript implements PaintListener{
 			{
 				Camera.turnTo(rock);
 				Task.sleep(500, 800);
+				System.out.println("Minning1");
 				Mouse.click(rock.getCentralPoint(), true);
 				Task.sleep(400, 600);
 			}
@@ -87,7 +88,7 @@ public class ironpowerminer extends ActiveScript implements PaintListener{
 		}
 
 		public void execute() {
-			
+			System.out.println("Dropping");
 			for (Item i : Inventory.getItems()) {
                 if (i.getId() == IRON_ID) {
                         i.getWidgetChild().interact("Drop");
