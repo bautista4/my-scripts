@@ -14,6 +14,7 @@ import org.powerbot.core.script.job.state.Node;
 import org.powerbot.core.script.job.state.Tree;
 import org.powerbot.game.api.Manifest;
 import org.powerbot.game.api.methods.input.Mouse;
+import org.powerbot.game.api.methods.input.Mouse.Speed;
 import org.powerbot.game.api.methods.interactive.Players;
 import org.powerbot.game.api.methods.node.SceneEntities;
 import org.powerbot.game.api.methods.tab.Inventory;
@@ -28,9 +29,13 @@ public class ironpowerminer extends ActiveScript implements PaintListener {
 	int[] ROCK_ID = { 11954, 11955, 11956 };
 	int[] MINNED_ID = { 11555, 11556, 11556 };
 	public static final int IRON_ID = 440;
-
+	
+	
+	
 	Tree jobs = null;
 
+	
+	
 	public int loop() {
 		if (jobs == null) {
 			jobs = new Tree(new Node[] { new Mining(), new Dropping() });
@@ -54,28 +59,31 @@ public class ironpowerminer extends ActiveScript implements PaintListener {
 		}
 
 		public void execute() {
+			Mouse.setSpeed(Speed.FAST);
 			System.out.println("Executing Mining");
 			SceneObject rock = SceneEntities.getNearest(ROCK_ID);
 			if (rock != null && rock.isOnScreen()
 					&& Players.getLocal().getAnimation() == -1
 					&& !Players.getLocal().isMoving())
-			// There used to be a semicolon here. No semicolons in if statements
+			
 
 			{
+				Mouse.setSpeed(Speed.FAST);
 				System.out.println("Rock found, on screen");
-				Mouse.click(rock.getCentralPoint(), true);
+				rock.interact("Mine");
 				Task.sleep(200, 500);
 				System.out.println("Done sleeping. look for new rock");
 
 			} else if (rock != null && !rock.isOnScreen()
 					&& Players.getLocal().getAnimation() == -1
 					&& !Players.getLocal().isMoving())
-			// Used to be a semicolon here, too
+			
 			{
+				Mouse.setSpeed(Speed.FAST);
 				System.out.println("Turning screen");
 				Camera.turnTo(rock);
 				System.out.println("Camera turned, mining.");
-				Mouse.click(rock.getCentralPoint(), true);
+				rock.interact("Mine");
 				Task.sleep(400, 600);
 			} else {
 				System.out.println("No case found");
@@ -92,6 +100,7 @@ public class ironpowerminer extends ActiveScript implements PaintListener {
 		}
 
 		public void execute() {
+			Mouse.setSpeed(Speed.FAST);
 			System.out.println("Attempting to drop");
 			for (Item i : Inventory.getItems()) {
 				if (i.getId() == IRON_ID) {
