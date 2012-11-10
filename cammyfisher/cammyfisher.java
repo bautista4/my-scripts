@@ -1,5 +1,8 @@
 package com.scripts.cammyfisher;
 
+import java.awt.*;
+
+import org.powerbot.core.event.listeners.PaintListener;
 import org.powerbot.core.script.ActiveScript;
 import org.powerbot.core.script.job.Task;
 import org.powerbot.core.script.job.state.Node;
@@ -19,7 +22,7 @@ import org.powerbot.game.api.wrappers.interactive.NPC;
 import org.powerbot.game.api.wrappers.node.SceneObject;
 
 @Manifest(authors = { "bautista4" }, name = "B4CammyFisher", description = "Fishes swordfish and tuna in cammy and banks them", version = 0.1)
-public class cammyfisher extends ActiveScript {
+public class cammyfisher extends ActiveScript implements PaintListener {
 
 	public static final int[] BANKER_ID = { 494, 495 };
 
@@ -158,4 +161,25 @@ public class cammyfisher extends ActiveScript {
 		}
 
 	}
+    
+    private final Color color1 = new Color(0, 0, 204);
+    private final Color color2 = new Color(0, 0, 0);
+
+    private final BasicStroke stroke1 = new BasicStroke(4);
+
+    private final Font font1 = new Font("Arial", 1, 20);
+
+    public void onRepaint(Graphics g1) {
+        Graphics2D g = (Graphics2D)g1;
+        g.setColor(color1);
+        g.fillRoundRect(6, 343, 506, 132, 16, 16);
+        g.setColor(color2);
+        g.setStroke(stroke1);
+        g.drawRoundRect(6, 343, 506, 132, 16, 16);
+        g.setFont(font1);
+        g.drawString("Author: bautista4", 169, 386);
+        g.drawString("B4CammyFisher", 176, 361);
+        g.drawString("Enjoy 99 fishing!", 174, 421);
+    }
+    
 }
