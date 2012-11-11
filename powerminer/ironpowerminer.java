@@ -1,23 +1,20 @@
 import java.awt.*;
 import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JToggleButton;
+import javax.swing.LayoutStyle;
 import javax.swing.border.EmptyBorder;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
+import javax.swing.*;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -51,6 +48,7 @@ import org.powerbot.game.api.util.Random;
 import org.powerbot.game.api.wrappers.node.Item;
 import org.powerbot.game.api.wrappers.node.SceneObject;
 
+
 @Manifest(authors = { "bautista4" }, name = "B4PowerMiner", description = "Powermines iron", version = 0.1)
 public class ironpowerminer extends ActiveScript implements PaintListener {
 
@@ -63,38 +61,28 @@ public class ironpowerminer extends ActiveScript implements PaintListener {
 	public static final int[] COAL = { 11930, 11932, 5770, 5772, 5771, 32428, 32427, 32426, 32247,  } ;
 	public static final int[] GOLD_ID = { 5768, 37312, 37310, 5769} ;
 	public static final int MINNING_ID = 625;
-	private int[] oresToMine;
-	private int ORE_ID = 0;
-	private static final int TIN_ORE= 438;
-	private static final int GOLD_ORE = 444;
-	private static final int COPPER_ORE = 436;
-	private static final int MITHRIL_ORE = 447;
-	private static final int COAL_ORE = 453;
-	private static final int IRON_ORE = 440;
-	
-	
+	public static int[] oresToMine;
+	public static int ORE_ID = 0;
+	public static final int TIN_ORE= 438;
+	public static final int GOLD_ORE = 444;
+	public static final int COPPER_ORE = 436;
+	public static final int MITHRIL_ORE = 447;
+	public static final int COAL_ORE = 453;
+	public static final int IRON_ORE = 440;
+
+	gui m = new gui();
 	Tree jobs = null;
 
-	private boolean guiWait = true;
-	gui g = new gui();
+	
 	// error here^
 	
-	public boolean onStart() {
-		// error here^
-		
-		g.setVisible(true);
-		while(guiWait) sleep(500);
-		// error here^
-		return true;
+	public void onStart() {
+		m.setVisible(true);
 		
 	}
 	
 	
 	public int loop() {
-		if (jobs == null) {
-			jobs = new Tree(new Node[] { new Mining(), new Dropping() });
-		}
-
 		final Node job = jobs.state();
 		if (job != null) {
 			jobs.set(job);
@@ -135,7 +123,7 @@ public class ironpowerminer extends ActiveScript implements PaintListener {
 					&& !Players.getLocal().isMoving())
 			
 			{
-				Mouse.setSpeed(Speed.FAST);
+				Mouse.setSpeed(Speed.VERY_FAST);
 				System.out.println("Turning screen");
 				Camera.turnTo(rock);
 				System.out.println("Camera turned, mining.");
@@ -144,8 +132,8 @@ public class ironpowerminer extends ActiveScript implements PaintListener {
 			} else if (rock != null && !rock.isOnScreen()
 					&& Players.getLocal().getAnimation() == -1
 					&& !Players.getLocal().isMoving()
-					&& Players.getLocal().getLocation().distanceOfTiles(rock) > 6){
-				// error on line right above this....^
+					&& Calculations.distanceTo(rock) > 6){
+				
 			Walking.walk(rock);
 			
 			} else {
@@ -209,87 +197,125 @@ public class ironpowerminer extends ActiveScript implements PaintListener {
 		g.drawImage(img2, 357, 417, null);
 		g.drawImage(img2, 117, 417, null);
 	}
-
-}
-
-
-class Minegui extends JFrame {
-
-	private JPanel contentPane;
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Minegui frame = new Minegui();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
-	 * Create the frame.
-	 */
-	public Minegui() {
-		setTitle("B4PowerMiner  V 1.0");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
-		contentPane = new JPanel();
-		contentPane.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 14));
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
+	
+	@SuppressWarnings("serial")
+	public class gui extends JFrame  {
+		public gui() {
+			initComponents();
+		}
 		
-		JLabel lblFishTypes = new JLabel("Ore Types :");
-		lblFishTypes.setBounds(57, 116, 63, 14);
-		contentPane.add(lblFishTypes);
-		
-		JComboBox oreSelected = new JComboBox();
-		oreSelected.setModel(new DefaultComboBoxModel(new String[] {"iron", "tin", "copper", "coal", "gold", "mithril"}));
-		oreSelected.setBounds(130, 113, 126, 20);
-		contentPane.add(oreSelected);
-		
-		JButton btnStart = new JButton("start");
-		btnStart.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			String chosen = oreSelected.getSelectedItem().toString();
+		private void StartButtonActionPerformed(ActionEvent e )
+		{
+			String chosen = comboBox1.getSelectedItem().toString();
 			if(chosen.equals("tin")) {
 				ORE_ID = TIN_ORE;
-				oresToMine = TIN_ID;
-			} else if (chosen.equals("copper")) {
-				ORE_ID = COPPER_ORE;
-				oresToMine = COPPER_ID;
-				
-			}else if (chosen.equals("gold"))
-				
-			{	ORE_ID = GOLD_ORE;		 
-			oresToMine = GOLD_ID;
-				
-			}else if (chosen.equals("iron")) {
-				ORE_ID = IRON_ORE;
-				oresToMine = IRON_ID;
-		}else if (chosen.equals("coal")) {
-			ORE_ID = COAL_ORE;
-			oresToMine = COAL_ID;
-			// error right here....i dont know why
-		}else (chosen.equals("mithril")) {
-			ORE_ID = MITRHIL_ORE;
-			oresToMine = MITHRIL_ID;
+			    ORE_ID = TIN_ORE;
+			    oresToMine = TIN_ID;
+			   } else if (chosen.equals("copper")) {
+			    ORE_ID = COPPER_ORE;
+			    oresToMine = COPPER_ID;
+			    
+			   }else if (chosen.equals("gold"))
+			    
+			   { ORE_ID = GOLD_ORE;   
+			   oresToMine = GOLD_ID;
+			    
+			   }else if (chosen.equals("iron")) {
+			    ORE_ID = IRON_ORE;
+			    oresToMine = IRON_ID;
+			  }else if (chosen.equals("coal")) {
+			   ORE_ID = COAL_ORE;
+			   oresToMine = COAL;
+			  }else if (chosen.equals("mithril")) {
+			   ORE_ID = MITHRIL_ORE;
+			   oresToMine = MITHRIL_ID;
+			   
+			  }
 			
+			jobs = new Tree(new Node[] { new Mining(), new Dropping() });
+			m.dispose();
+		}
+
+		private void initComponents() {
+			
+			B4PowerMiner = new JPanel();
+			label1 = new JLabel();
+			comboBox1 = new JComboBox<>();
+			button1 = new JButton();
+
+			//======== B4PowerMiner ========
+			{
+
+				// JFormDesigner evaluation mark
+				B4PowerMiner.setBorder(new javax.swing.border.CompoundBorder(
+					new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
+						"JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
+						javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
+						java.awt.Color.red), B4PowerMiner.getBorder())); B4PowerMiner.addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
+
+
+				//---- label1 ----
+				label1.setText("ore types :");
+
+				//---- comboBox1 ----
+				comboBox1.setModel(new DefaultComboBoxModel<>(new String[] {
+					"mithril",
+					"iron",
+					"copper",
+					"tin",
+					"coal",
+					"gold"
+				}));
+
+				//---- button1 ----
+				button1.setText("start");
+				button1.addActionListener (new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						StartButtonActionPerformed(e);
+					}
+				});
+
+				GroupLayout B4PowerMinerLayout = new GroupLayout(B4PowerMiner);
+				B4PowerMiner.setLayout(B4PowerMinerLayout);
+				B4PowerMinerLayout.setHorizontalGroup(
+					B4PowerMinerLayout.createParallelGroup()
+						.addGroup(B4PowerMinerLayout.createSequentialGroup()
+							.addGroup(B4PowerMinerLayout.createParallelGroup()
+								.addGroup(B4PowerMinerLayout.createSequentialGroup()
+									.addGap(64, 64, 64)
+									.addComponent(label1, GroupLayout.PREFERRED_SIZE, 54, GroupLayout.PREFERRED_SIZE)
+									.addGap(18, 18, 18)
+									.addComponent(comboBox1, GroupLayout.PREFERRED_SIZE, 55, GroupLayout.PREFERRED_SIZE))
+								.addGroup(B4PowerMinerLayout.createSequentialGroup()
+									.addGap(83, 83, 83)
+									.addComponent(button1, GroupLayout.PREFERRED_SIZE, 135, GroupLayout.PREFERRED_SIZE)))
+							.addGap(62, 62, 62))
+				);
+				B4PowerMinerLayout.setVerticalGroup(
+					B4PowerMinerLayout.createParallelGroup()
+						.addGroup(B4PowerMinerLayout.createSequentialGroup()
+							.addGap(26, 26, 26)
+							.addGroup(B4PowerMinerLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+								.addComponent(comboBox1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(label1))
+							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 75, Short.MAX_VALUE)
+							.addComponent(button1, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
+							.addGap(31, 31, 31))
+				);
 			}
 			
-			guiWait = false;
-			g.dispose();
-			
-			}
-		});
-		btnStart.setBounds(141, 209, 89, 23);
-		contentPane.add(btnStart);
+		}
+
+		
+		private JPanel B4PowerMiner;
+		private JLabel label1;
+		private JComboBox<String> comboBox1;
+		private JButton button1;
+		
 	}
+
+
+
+
 }
+
